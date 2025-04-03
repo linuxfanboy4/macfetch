@@ -1,0 +1,42 @@
+PortSystem 1.0
+name            macfetch
+version         2.0.0
+categories      sysutils
+maintainers     Calestial Ashley <calestialashley@gmail.com>
+license         MIT
+platforms       darwin
+homepage        https://github.com/linuxfanboy4/macfetch
+description     A sleek and advanced system information fetch tool for macOS
+long_description \
+    macfetch is a Python-based tool designed to fetch and display advanced system information \
+    for macOS and Linux in a visually appealing and interactive manner. The output includes CPU, GPU, \
+    memory, battery, disk, network, and other system details with a vibrant UI using the 'rich' library.
+
+master_sites    https://github.com/linuxfanboy4/macfetch/raw/c5863cf7ad0c534ef8ddf70586403c70f5074002/
+distfiles       macfetch.tar.gz
+checksums       sha256  4d86c859a4d871a344063b016857567894e4a42820de9530ac479d22f7c9d690
+
+depends_build   port:python39
+depends_run     port:python39
+python.versions  39
+
+worksrcdir      ${name}
+
+use_bzip2       no
+use_pip         yes
+
+post-patch {
+    system "python3 -m pip install --upgrade pip setuptools"
+}
+
+destroot {
+    xinstall -d ${destroot}${prefix}/bin
+    xinstall -m 755 ${worksrcdir}/src/macfetch.py ${destroot}${prefix}/bin/macfetch
+}
+
+post-install {
+    system "chmod +x ${destroot}${prefix}/bin/macfetch"
+    system "ln -s ${prefix}/bin/macfetch ${destroot}${prefix}/bin/macfetch"
+}
+
+depends_lib-append  port:py39-psutil port:py39-rich port:py39-cpuinfo port:py39-gpuinfo
